@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>v-bind使用</title>
+	
+	<style type="text/css">
+		.wh{width:100px;height:100px;}
+		.bg{background:#ccc;}
+		.br{border:1px solid #111;}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<img v-bind:src="imageSrc">
+		<!-- 缩写 -->
+		<img :src="imageSrc">	
+		<img :src="'/images/'+fileName">
+		<div :class="[classA,classB]"></div>
+		<div :class="{wh:true,bg:false,br:true}"></div>
+		<div :class="[classA,{br:true,bg:true}]"></div>
+		<div :class="'br'">sss</div>
+
+		<p :style="[style1,style2]">test</p>
+		<p :style="{fontSize:size+'px',color:'blue'}">test</p>
+		<p v-bind="{id:'test','other':other}">test</p>
+		<div :text-content.prop="text" :style="{fontSize:size+'px',color:'blue'}"></div>
+		<svg :view-box.camel="viewBox"></svg>
+	</div>
+
+	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el:"#app",
+			data:{
+				imageSrc:"http://pic.qiantucdn.com/58pic/26/32/17/19t58PICz8m.jpg!qtwebp290",
+				fileName:"test.jpg",
+				classA:"wh",
+				classB:"bg",
+				size:"18",
+				other:"othertest",
+				text:"这是一个渲染文本...",
+				style1:{
+					"font-size":"16px"
+				},
+				style2:{
+					"color":"red"
+				},
+				viewBox:"http://pic.qiantucdn.com/58pic/26/32/17/19t58PICz8m.jpg!qtwebp290"
+			}
+
+		});
+	</script>
+</body>
+</html>

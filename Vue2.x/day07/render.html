@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		.foo{
+			font-weight:bold;
+		}
+		.bar{
+			font-size:24px;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<blog-post myProp='test'>
+			<h1 slot="header">
+			About Me
+			</h1>
+
+			<p>Here's some page content, which will be included in vm.$slots.default, because it's not inside a named slot.</p>
+
+			<p slot="footer">
+			Copyright 2016 Evan You
+			</p>
+			<p>If I have some content down here, it will also be included in vm.$slots.default.</p>
+		</blog-post>	
+
+		<anchored-heading :level="level">
+			text
+			<span>test。。。</span>
+		</anchored-heading>
+		<test :message="message | capitalize"></test>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+	<script type="text/javascript">
+		Vue.component('blog-post',{
+			render(createElement){
+				var header = this.$slots.header;
+				var footer = this.$slots.footer;
+				var body = this.$slots.default;
+				console.log(header)
+				console.log(footer)
+				console.log(body)
+				var e = createElement('div',{
+					class:{
+						foo:true,
+						bar:false
+					},
+					props: {
+						myProp: 'bar'
+					},
+					attrs: {
+					    id: 'foo'
+					},
+					style:{
+						fontSize:'14px',
+						color:'red'
+					},
+					domProps:{
+						// innerHTML:'baz'
+					}	
+				},[
+					'文本节点',
+					createElement('header', header),
+					createElement('main', body),
+					createElement('footer', footer)
+				]) 
+				console.log(e)
+				return e
+			}
+		})	
+		var getChildrenTextContent = function (children) {
+		  return children.map(function (node) {
+		    return node.children
+		      ? getChildrenTextContent(node.children)
+		      : node.text
+		  }).join('')
+		}
+
+		Vue.component('anchored-heading', {
+		  render: function (createElement) {
+		    // create kebabCase id
+		    var headingId = getChildrenTextContent(this.$slots.default)
+		      .toLowerCase()
+		      .replace(/\W+/g, '-')
+		      .replace(/(^\-|\-$)/g, '')
+		    console.log(this.level);
+		    return createElement(
+		      'h' + this.level,
+		      [
+		        createElement('a', {
+		          attrs: {
+		            name: headingId,
+		            href: '#' + headingId
+		          }
+		        }, this.$slots.default)
+		      ]
+		    )
+		  },
+		  props: {
+		    level: {
+		      type: Number,
+		      required: true
+		    }
+		  }
+		})
+
+		Vue.component('test',{
+			// render: function (createElement) {
+			// 	var myParagraphVNode = createElement('p', 'hi')
+			// 	return createElement('div', [
+			// 		// 错误-重复的 VNodes
+			// 		myParagraphVNode, myParagraphVNode
+			// 	])
+			// }
+			render: function (h) {
+				let createElement = h;
+				console.log(this.$scopedSlots)
+			  return createElement('div',{
+			  	scopedSlots: {
+			        default: function (props) {
+			          return createElement('span', props.text)
+			        }
+			    },
+			    props:['message']
+			  },
+			    Array.apply(null, { length: 10 }).map(function () {
+			      return createElement('p', 'hi')
+			    })
+			  )
+			}
+		})
+		new Vue({
+			el:'#app',
+			data:{
+				level:2,
+				message:'test'
+			},
+			filters:{
+				capitalize: function (value) {
+				    if (!value) return ''
+				    value = value.toString()
+				    return value.charAt(0).toUpperCase() + value.slice(1)
+				}
+			},
+		})
+	</script>
+</body>
+</html>

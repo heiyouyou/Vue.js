@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>v-on的使用</title>
+</head>
+<body>
+	<div id="app">
+		<button v-on:click="doThis">按钮</button>
+		<button v-on="{mousedown:doThis,mouseup:doThat}">按钮</button>
+		<button v-on:click="inline('hello',$event)">按钮</button>
+		<button @click="inline('hello',$event)">按钮</button>
+		<button @click.stop="stop">按钮</button>
+		<button @click.prevent="prevent">按钮</button>
+		<form @submit.prevent="prevent"><button type="submit">提交</button></form>
+		<button @click.stop.prevent="combine">按钮</button>
+		<input type="text" @keyup.enter="enter" placeholder="回车提交">
+		<input type="text" @keyup.13="enter" placeholder="回车提交">
+		<button @click.stop.once="once">触发</button>
+		<button @click.left="doThis">鼠标左键触发</button>
+		<button @click.right="doThis">鼠标右键触发</button>
+		<button @click.middle="doThis">鼠标中键触发</button>
+	</div>
+
+
+	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el:"#app",
+			data:{
+
+			},
+			methods:{
+				doThis(){
+					alert('方法处理器')
+				},
+				doThat(){
+					alert('对象语法')
+				},
+				inline(t,e){
+					console.log(t)
+					console.log(e)
+				},
+				prevent(){
+					alert('阻止默认行为')
+				},
+				stop(){
+					alert('阻止冒泡')
+				},
+				combine(){
+					alert('串联修饰符')
+				},
+				enter(){
+					alert('回车添加')
+				},
+				once(){
+					alert('只进行一次触发')
+				}
+			}
+		})
+	</script>
+</body>
+</html>

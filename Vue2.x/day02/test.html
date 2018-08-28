@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>侦听器实例</title>
+</head>
+<body>
+	<div id="app">
+		<input type="text" v-model="example0">
+		<input type="text" v-model="example1">
+		<!-- 　　当观察数据examples2为对象时，如果键值发生变化，为了监听到数据变化，需要添加deep:true参数 -->
+		<input type="text" v-model="example2.inner0">
+		<p>{{example0}}---{{example1}}---{{example2.inner0}}---{{example2.inner1}}</p>
+	</div>
+
+	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el:"#app",
+			data(){
+				return {
+					example0:"",
+					example1:"",
+					example2:{
+						inner0:1,
+						inner1:2
+					}
+				}
+			},
+			watch:{
+				example0(c,o){
+					console.log(c,o)
+				},
+				example1:'a',//值可以为methods的方法名
+				example2:{
+					// 当观察的数据为对象或数组时，curVal和oldVal是相等的，因为这两个形参指向的是同一个数据对象
+					handler(curVal,oldVal){
+						console.log(curVal,oldVal)
+					},
+					deep:true
+				}
+			},
+			methods:{
+				a(c,o){
+					console.log(c,o)
+				}
+			}
+		})
+	</script>
+</body>
+</html>

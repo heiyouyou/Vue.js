@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<input type="" name="" v-focus>
+		<p v-demo:foo.a.b="message" data-name="test"></p>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+	<script type="text/javascript">
+		// 全局注册
+		// Vue.directive('focus',{
+		// 	inserted(el){
+		// 		console.log(el)
+		// 		el.focus()
+		// 	}
+		// })
+
+		// 局部注册
+		new Vue({
+			el:'#app',
+			data:{
+				message:'hello world...'
+			},
+			directives:{
+				focus:{
+					bind: function (el, binding, vnode) {
+						console.log('bind...')  
+					},
+					inserted(el){
+						console.log('inserted...')
+						el.focus()
+					},
+					update(){
+						console.log('update...')
+					},
+					componentUpdated(){
+						console.log('componentUpdated...')
+					},
+					unbind(){
+						console.log('unbind...')
+					}			
+				},
+				demo:{
+					bind: function (el, binding, vnode) {
+						var s = JSON.stringify
+						console.log(binding)
+						el.innerHTML =
+						  'name: '       + s(binding.name) + '<br>' +
+						  'value: '      + s(binding.value) + '<br>' +
+						  'expression: ' + s(binding.expression) + '<br>' +
+						  'argument: '   + s(binding.arg) + '<br>' +
+						  'modifiers: '  + s(binding.modifiers) + '<br>' +
+						  'vnode keys: ' + Object.keys(vnode).join(', ')
+					},
+					inserted(el){
+						console.log('inserted...')
+					},
+					update(){
+						console.log(update)
+					},
+					componentUpdated(){
+						console.log('componentUpdated...')
+					},
+					unbind(){
+						console.log('unbind...')
+					}			
+				}
+			}
+		})
+	</script>
+</body>
+</html>

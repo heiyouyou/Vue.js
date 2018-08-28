@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		.fade-enter{
+			opacity: 0;
+		}
+		.fade-enter-active{
+			transition: opacity .5s;
+		}
+		.fade-enter-to{
+			background:red;
+		}
+		.fade-leave{
+			background:blue;
+		}
+		.fade-leave-active{
+			transition: opacity .5s;
+		}
+		.fade-leave-to{
+			opacity: 0;
+		}
+		.component-fade-enter-active, .component-fade-leave-active {
+		  transition: opacity .3s ease;
+		}
+		.component-fade-enter, .component-fade-leave-to{
+		  opacity:0; 
+		}
+		.bounce-enter-active{
+			animation:bounce-in .5s;
+		}
+		.bounce-leave-active{
+			animation:bounce-in .5s reverse;
+		}
+		@keyframes bounce-in{
+			0%{
+				transform:scale(0);
+			}
+			50%{
+				transform:scale(1.5);
+			}
+			100%{
+				transform:scale(1);
+			}
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<button @click="show = !show">toggle</button>
+		<transition name="fade">
+			<p v-if="show">toggle</p>
+		</transition>
+		<button @click="showBounce = !showBounce">toggleBounce</button>
+		<transition name="bounce" :duration="{enter:1000,leave:2000}">
+    		<p v-if="showBounce">Lorem7 ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis enim libero, at lacinia diam fermentum id. Pellentesque habitant morbi tristique senectus et netus.</p>
+		</transition>
+		<link href="https://cdn.jsdelivr.net/npm/animate.css@3.5.1" rel="stylesheet" type="text/css">
+		<div id="example-3">
+		  <button @click="show = !show">
+		    Toggle render
+		  </button>
+		  <transition
+		    name="custom-classes-transition"
+		    enter-active-class="animated bounceInLeft"
+		    leave-active-class="animated bounceOutRight"
+		    @before-enter="beforeEnter"
+		    @enter="enter"
+		    @after-enter="afterEnter"
+		    @enter-cancelled="enterCancelled"
+		    @before-leave="beforeLeave"
+		    @leave="leave"
+		    @after-leave="afterLeave"
+		    @leave-cancelled="leaveCancelled"
+		  >
+		    <p v-if="show">hello</p>
+		  </transition>
+		  <div>
+			<button @click="show = !show">
+			    Toggle render
+			</button>
+		 	<transition appear
+		 		appear-class="appear-class"
+		 		appear-to-class="appear-to-class"
+		 		appear-active-class="appear-active-class"
+		 		enter-active-class="animated bounceInLeft"
+		    	leave-active-class="animated bounceOutRight">
+		 		<p v-if="show">
+		 			world
+		 		</p>
+
+		 	</transition>
+		  </div>
+		  <div>
+		  	<button @click="show = !show">
+			    Toggle
+			</button>
+		 	<transition
+				enter-active-class="animated fadeInLeft"
+		    	leave-active-class="animated fadeOutRight"
+		 		>
+		 		<button v-bind:key="docState">{{buttonMessage}}</button>
+		 	</transition>
+		  </div>
+		  <div>
+		  	<button @click="changeBtn">fadeBtn</button>
+		  	<transition name='fade' mode="out-in">
+		  		<button v-bind:key="btnText">{{btnText}}</button>
+		  	</transition>
+		  </div>
+		  <div style="margin-top:10px;">
+		  	<button @click="changeView">changeView</button>
+		  		<transition name="component-fade" mode="out-in">
+		  			<component v-bind:is="view">
+		  				
+		  			</component>
+		  		</transition>
+		  </div>
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+	<script type="text/javascript">
+		new Vue({
+			el:'#app',
+			data:{
+				show:false,
+				showBounce:true,
+				docState:'saved',
+				btnText:'off',
+				view:'v-a'
+			},
+			components: {
+			    'v-a': {
+			      template: '<div>Component A</div>'
+			    },
+			    'v-b': {
+			      template: '<div>Component B</div>'
+			    }
+			},
+			methods:{
+				changeView(){
+					if(this.view=='v-a'){
+						this.view = 'v-b'
+					}else{
+						this.view = 'v-a'
+					}
+				},
+				changeBtn(){
+					if(this.btnText=='off'){
+						this.btnText = 'on'
+					}else{
+						this.btnText = 'off'
+					}
+				},
+				beforeEnter: function (el) {
+					console.log(el,'beforeEnter')
+				},
+				// 此回调函数是可选项的设置
+				// 与 CSS 结合时使用
+				enter: function (el, done) {
+					console.log(el,'enter')
+					// console.log(done)
+					// done()
+				},
+				afterEnter: function (el) {
+					console.log(el,'afterEnter')
+				},
+				enterCancelled: function (el) {
+					console.log(el,'enterCancelled')
+				},
+
+				// --------
+				// 离开时
+				// --------
+
+				beforeLeave: function (el) {
+					console.log(el,'beforeLeave')
+				},
+				// 此回调函数是可选项的设置
+				// 与 CSS 结合时使用
+				leave: function (el, done) {
+					console.log(el,'leave')
+					// console.log(done)
+					// done()
+				},
+				afterLeave: function (el) {
+					console.log(el,'afterLeave')
+				},
+				// leaveCancelled 只用于 v-show 中
+				leaveCancelled: function (el) {
+					console.log(el,'leaveCancelled')
+				}
+			},
+			computed:{
+				buttonMessage(){
+					switch (this.docState) {
+						case 'saved': return 'Edit'
+						case 'edited': return 'Save'
+						case 'editing': return 'Cancel'
+					}
+				}
+			}
+		})
+	</script>
+</body>
+</html>

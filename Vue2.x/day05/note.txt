@@ -1,0 +1,86 @@
+一、自定义事件
+	每个 Vue 实例都实现了事件接口，即：
+	使用 $on(eventName) 监听事件
+	使用 $emit(eventName, optionalPayload) 触发事件
+
+	1、给组件绑定原生事件
+		可以使用 v-on 的修饰符.native。例如：
+		<my-component v-on:click.native="doTheThing y-component>
+
+	2、自定义事件可以用来创建自定义的表单输入组件，使用 v-model 来进行数据双向绑定。要牢记：
+		<input v-model="something">
+		这不过是以下示例的语法糖：
+		<input v-bind:value="something" v-on:input="something = $event.target.value">
+
+	3、自定义组件的 v-model
+		默认情况下，一个组件的 v-model 会使用 value prop 和 input 事件。但是诸如单选框、复选框之类的输入类型可能把 value 用作了别的目的。model 选项可以避免这样的冲突：
+		Vue.component('my-checkbox', {
+		  model: {
+		    prop: 'checked',
+		    event: 'change'
+		  },
+		  props: {
+		    checked: Boolean,
+		    // 这样就允许拿 `value` 这个 prop 做其它事了
+		    value: String
+		  },
+		  // ...
+		})
+		<my-checkbox v-model="foo" value="some value"></my-checkbox>
+		可以将原来的prop改成checked，event时间改成change
+
+	4、使用插槽符分发内容
+		1.单个插槽
+			子组件模板包含至少一个 <slot> 插口，否则父组件的内容将会被丢弃。当子组件模板只有一个没有属性的插槽时，父组件传入的整个内容片段将插入到插槽所在的 DOM 位置，并替换掉插槽标签本身。
+			最初在 <slot> 标签中的任何内容都被视为备用内容。备用内容在子组件的作用域内编译，并且只有在宿主元素为空，且没有要插入的内容时才显示备用内容。
+		
+		2.具名插槽
+			<slot> 元素可以用一个特殊的特性 name 来进一步配置如何分发内容。多个插槽可以有不同的名字。具名插槽将匹配内容片段中有对应 slot 特性的元素。
+			仍然可以有一个匿名插槽，它是默认插槽，作为找不到匹配的内容片段的备用插槽。如果没有默认插槽，这些找不到匹配的内容片段将被抛弃。
+
+		3.作用域插槽
+			作用域插槽是一种特殊类型的插槽，用作一个 (能被传递数据的) 可重用模板，来代替已经渲染好的元素。
+			在子组件中，只需将数据传递到插槽就可以达到效果。，如：
+			在父级中，具有特殊特性 slot-scope 的 <template> 元素必须存在，表示它是作用域插槽的模板。slot-scope 的值将被用作一个临时变量名，此变量接收从子组件传递过来的 prop 对象：
+				<div class="parent">
+				  <child>
+				    <template slot-scope="props">
+				      <span>hello from parent</span>
+				      <span>{{ props.text }}</span>
+				    </template>
+				  </child>
+				</div>
+			如果我们渲染上述模板，得到的输出会是：
+				<div class="parent">
+				  <div class="child">
+				    <span>hello from parent</span>
+				    <span>hello from child</span>
+				  </div>
+				</div>
+			注意：
+				1.在 2.5.0+，slot-scope 能被用在任意元素或组件中而不再局限于 <template>
+				2.slot-scope 的值实际上是一个可以为一个合法的 JavaScript 表达式，故可以使用ES2015中的对象解构赋值
+	5、动态组件
+		通过使用<component> 元素，并对其 is 特性进行动态绑定组件的名字，可以在同一个挂载点动态切换多个组件，如：
+		var vm = new Vue({
+			el: '#example',
+			data: {
+				currentView: 'home'
+			},
+			components: {
+				home: { /* ... */ },
+				posts: { /* ... */ },
+				archive: { /* ... */ }
+			}
+		})
+		<component v-bind:is="currentView">
+		  <!-- 组件在 vm.currentview 变化时改变！ -->
+		</component>
+		注意：
+		keep-alive
+		如果把切换出去的组件保留在内存中，可以保留它的状态或避免重新渲染。为此可以添加一个 keep-alive 指令参数：
+		<keep-alive>
+		  <component :is="currentView">
+		    <!-- 非活动组件将被缓存！ -->
+		  </component>
+		</keep-alive>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>v-for的注意点</title>
+</head>
+<body>
+	<div id="app">
+		<ul>
+			<template v-for="item in items">
+				<li>{{item.message}}</li>			
+			</template>
+		</ul>
+		<ul>
+			<li v-for='todo in todos' v-if='!todo.isComplete'>{{todo.msg}}</li>
+		</ul>
+	</div>
+	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el:"#app",
+			data:{
+				items:[
+					{message:'Foo'},
+      				{message:'Bar'}
+				],
+				todos:[
+					{
+						'isComplete':true,
+						'msg':'Fake'
+					},{
+						'isComplete':false,
+						'msg':'Sally'
+					},{
+						'isComplete':false,
+						'msg':'Nick'
+					},
+				]
+			}
+		})
+	</script>
+</body>
+</html>

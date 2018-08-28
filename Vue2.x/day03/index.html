@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>事件处理</title>
+</head>
+<body>
+	<div id="app">
+		<button v-on:click="counter += 1">Add 1</button>
+		<button v-on:click="counter -= 1">minus 1</button>
+  		<p>The button above has been clicked {{ counter }} times.</p>
+  		<button v-on:click="greet">Greet</button>
+  		<form v-on:submit.prevent>
+  			<input type="submit" value="提交">
+  		</form>
+  		<div v-on:click.self="doThat" v-bind:style="{border:'1px solid red'}"><button>点击</button></div>
+  		<div v-on:click.capture="doThat" v-bind:style="{border:'1px solid blue'}"><button>点击</button></div>
+		<div v-on:scroll.passive="onScroll" v-bind:style="{height:'300px',width:'300px','overflow':'scroll'}">
+			不要把 .passive 和 .prevent 一起使用，因为 .prevent 将会被忽略，同时浏览器可能会向你展示一个警告。请记住，.passive 会告诉浏览器你不想阻止事件的默认行为。不要把 .passive 和 .prevent 一起使用，因为 .prevent 将会被忽略，同时浏览器可能会向你展示一个警告。请记住，.passive 会告诉浏览器你不想阻止事件的默认行为。不要把 .passive 和 .prevent 一起使用，因为 .prevent 将会被忽略，同时浏览器可能会向你展示一个警告。请记住，.passive 会告诉浏览器你不想阻止事件的默认行为。不要把 .passive 和 .prevent 一起使用，因为 .prevent 将会被忽略，同时浏览器可能会向你展示一个警告。请记住，.passive 会告诉浏览器你不想阻止事件的默认行为。
+			不要把 .passive 和 .prevent 一起使用，因为 .prevent 将会被忽略，同时浏览器可能会向你展示一个警告。请记住，.passive 会告诉浏览器你不想阻止事件的默认行为。不要把 .passive 和 .prevent 一起使用，因为 .prevent 将会被忽略，同时浏览器可能会向你展示一个警告。请记住，.passive 会告诉浏览器你不想阻止事件的默认行为。不要把 .passive 和 .prevent 一起使用，因为 .prevent 将会被忽略，同时浏览器可能会向你展示一个警告。请记住，.passive 会告诉浏览器你不想阻止事件的默认行为。不要把 .passive 和 .prevent 一起使用，因为 .prevent 将会被忽略，同时浏览器可能会向你展示一个警告。请记住，.passive 会告诉浏览器你不想阻止事件的默认行为。
+			不要把 .passive 和 .prevent 一起使用，因为 .prevent 将会被忽略，同时浏览器可能会向你展示一个警告。请记住，.passive 会告诉浏览器你不想阻止事件的默认行为。不要把 .passive 和 .prevent 一起使用，因为 .prevent 将会被忽略，同时浏览器可能会向你展示一个警告。请记住，.passive 会告诉浏览器你不想阻止事件的默认行为。不要把 .passive 和 .prevent 一起使用，因为 .prevent 将会被忽略，同时浏览器可能会向你展示一个警告。请记住，.passive 会告诉浏览器你不想阻止事件的默认行为。不要把 .passive 和 .prevent 一起使用，因为 .prevent 将会被忽略，同时浏览器可能会向你展示一个警告。请记住，.passive 会告诉浏览器你不想阻止事件的默认行为。
+		</div>
+		<input type="text" v-on:keyup.13='submit' placeholder="回车">
+		<input type="text" v-on:keyup.enter='submit' placeholder="回车">
+		<input type="text" v-on:keyup.delete='submit' placeholder="删除">
+		<input type="text" v-on:keyup.up='submit' placeholder="向上">
+		<input type="text" v-on:keyup.down='submit' placeholder="向下">
+		<input type="text" v-on:keyup.v='submit' placeholder="v字母键">
+		<input type="text" v-on:keyup.f1='submit' placeholder="F1键">
+		<input type="text" v-on:keyup.up='submit' placeholder="向上键">
+		<h2>系统按键修饰符</h2>
+		<input @keyup.alt="clear" placeholder="按下alt键并回车">
+		<div @click.ctrl="doSomething">按住ctrl并点击</div>
+		<h2>exact</h2>
+		<!-- 即使 Alt 或 Shift 被一同按下时也会触发 -->
+		<button @click.ctrl="onClick">A</button>
+
+		<!-- 有且只有 Ctrl 被按下的时候才触发 -->
+		<button @click.ctrl.exact="onCtrlClick">A</button>
+
+		<!-- 没有任何系统修饰符被按下的时候才触发 -->
+		<button @click.exact="onClick">A</button>
+		<div @click.left='left' v-bind:style="{'border':'1px solid red','height':'100px',width:'200px'}">
+			点击鼠标左键
+		</div>
+		<div @click.right='right' v-bind:style="{'border':'1px solid red','height':'100px',width:'200px'}">
+			点击鼠标右键
+		</div>
+		<div @click.middle='middle' v-bind:style="{'border':'1px solid red','height':'100px',width:'200px'}">
+			点击鼠标中键
+		</div>
+	</div>
+	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+	<script type="text/javascript">
+		// 自定义键盘的修饰符别名
+		Vue.config.keyCodes = {
+			v:86,
+			f1:112,
+			mediaPlayPause:179,
+			up:[33,87]
+		}
+		var vm = new Vue({
+			el:"#app",
+			data:{
+				counter:0,
+				name:'Nick'
+			},
+			methods:{
+				right(){
+					console.log('鼠标右键')
+				},
+				left(){
+					console.log('鼠标左键')
+				},
+				middle(){
+					console.log('鼠标中键')
+				},
+				onClick(){
+					console.log('ctrl...')
+				},
+				clear(){
+					console.log('clear.....')
+				},
+				onCtrlClick(){
+					console.log('ctrl.exact....')
+				},
+				doSomething(){
+					console.log('doSomething.....')
+				},
+				greet(event){
+					alert('Hello '+this.name+'!')
+					console.log(event)
+					if(event){
+						alert(event.target.tagName)
+					}
+				},
+				doThat(){
+					alert('触发了！')
+				},
+				onScroll(){
+					console.log(111)
+				},
+				submit(){
+					console.log(222222)
+				}
+			}
+		})
+	</script>
+</body>
+</html>

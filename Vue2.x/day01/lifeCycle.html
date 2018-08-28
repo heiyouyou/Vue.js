@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>生命周期</title>
+</head>
+<body>
+	<div id="app">
+		<span v-once>{{a}}</span>
+		<button v-on:click='a="test2"'>change it</button>
+	</div>
+	<div id="app-2">
+		
+	</div>
+
+	<div id="mount-point">
+		
+	</div>
+	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el:"#app",
+			data:{
+				a:'test'
+			},
+			methods:{
+				say(){
+					console.log('hello...')
+				}
+			},
+			beforeCreate(){
+				console.log('beforeCreate...')
+				console.log(this.a)//undefined
+				console.log(this.$el)//undefined
+				this.say()//报错
+			},
+			created(){
+				console.log('created...')
+				console.log(this.a)//test
+				console.log(this.$el)//undefined	
+				this.say()//hello...
+			},
+			beforeMount(){
+				console.log('beforeMount...')
+				console.log(this.a)//test
+				console.log(this.$el)//dom...	
+				this.say()//hello...
+			},
+			mounted(){
+				console.log('mounted...')
+				console.log(this.a)//test
+				console.log(this.$el)//dom...	
+				this.say()//hello...
+			},
+			beforeUpdate(){
+				console.log('beforeUpdate...')
+				console.log(this.a)//test2
+				this.say()//hello...
+			},
+			updated(){
+				console.log('updated...')
+				console.log(this.a)//test2
+				this.say()//hello...
+				this.$destroy();
+			},
+			beforeDestroy(){
+				console.log('beforeDestroy...')
+				console.log(this.a)//test2	
+				console.log(this.$el)//dom...	
+				this.say()//hello...
+			},
+			destroyed(){
+				console.log('destroyed...')
+				console.log(this.a)//test2	
+				console.log(this.$el)//dom...	
+				this.say()//hello...
+			}
+		})
+
+		var myComponent = Vue.extend({
+			template:'<div>hello!</div>',
+			beforeMount(){
+				console.log('beforeMount start...')
+			},
+			mounted(){
+				console.log('mounted start...')
+			}
+		})
+
+		// new myComponent().$mount('#app-2')
+		var component = new myComponent().$mount()
+		console.log(component.$el)
+		document.getElementById("app-2").appendChild(component.$el)
+
+
+		// 使用基础 Vue 构造器，创建一个“子类”。参数是一个包含组件选项的对象。
+		// data 选项是特例，需要注意 - 在 Vue.extend() 中它必须是函数
+		var Profile = Vue.extend({
+			template:"<p>{{firstName}} {{lastName}} aka {{alias}}</p>",
+			data(){
+				return {
+					firstName: 'Walter',
+					lastName: 'White',
+					alias: 'Heisenberg'
+				}
+		    },
+		    beforeMount(){
+		    	console.log('Profile start...')
+		    },
+		    mounted(){
+		    	console.log('Profile mounted...')
+		    }
+		})
+		new Profile().$mount('#mount-point')
+	</script>
+</body>
+</html>

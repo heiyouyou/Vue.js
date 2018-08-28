@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<p>{{count}}</p>
+		<p>{{getObj}}</p>
+		<p>{{name+'---'+age}}</p>
+		<button @click="change">change</button>
+		<button @click="changeObj">changeObj</button>
+		<button @click="getName('hei')">getName</button>
+		<button @click="getAge">getAge</button>
+		<button @click="getLastName">getLastName</button>
+		<button @click="actionB">actionB</button>
+		<button @click="bindB">bindB</button>
+	</div>
+	<script src="https://unpkg.com/vue"></script>
+	<script src="https://unpkg.com/vuex@2.0.0"></script>
+	<script>
+		const mapMutations = Vuex.mapMutations 
+		const mapState = Vuex.mapState 
+		const mapActions = Vuex.mapActions 
+		const store = new Vuex.Store({
+			strict: true,
+			state:{
+				count:0,
+				obj:{
+					a:1
+				},
+				name:'you',
+				age:23
+			},
+			mutations:{
+				increment(state,payload){
+					console.log(payload.type)
+					state.count += payload.num
+				},
+				changeObj(state){
+					setTimeout(()=>{
+						console.log('async...')
+						state.obj.b = 2
+					},2000)
+				},
+				getName(state,n){
+					state.name += ' you...'+n 
+				},
+				age(state){
+					state.age += '岁'
+				},
+				getAsyncData(state,n){
+					console.log('getAsyncData...',n)
+				},
+				getAsyncOtherData(state,n){
+					console.log('getAsyncOtherData...',n)
+				}
+			},
+			actions:{
+				increment(context,payload){
+					context.commit('increment',payload)
+				},
+				incrementAsync({commit},payload){
+					setTimeout(()=>{
+						console.log('async start...')
+						commit('increment',payload)
+					},1000)
+				},
+				getLastName({commit}){
+					commit('getName','youyou')
+				},
+				async actionA({commit}){
+					function getData(){
+						setTimeout(()=>{
+							return 'test'
+						},2000)
+					}
+					commit('getAsyncData',await getData())
+				},
+				async actionB({dispatch,commit}){
+					function getOtherData(){
+						setTimeout(()=>{
+							return 'test222'
+						},2000)
+					}
+					await dispatch('actionA').then((t)=>{
+						console.log('acitonA',t)
+					})
+					commit('getAsyncOtherData',await getOtherData())
+				}
+			}
+		})
+
+		new Vue({
+			el:'#app',
+			store,
+			computed:{
+				count(){
+					return this.$store.state.count
+				},
+				getObj(){
+					return this.$store.state.obj
+				},
+				...mapState(['age','name'])
+			},
+			methods:{
+				change(){
+					// this.$store.commit('increment',{num:2})
+					this.$store.commit({
+						type: 'increment',
+						num: 4
+					})
+					this.$store.commit('changeObj')
+					this.$store.dispatch({
+						type: 'increment',
+						num: 5
+					})
+					this.$store.dispatch('incrementAsync',{num:6})
+				},
+				changeObj(){
+					// this.$store.state.obj.c = 3
+					// Vue.set(this.$store.state.obj,'d',4)
+					this.$store.state.obj = {...this.$store.state.obj,e:5} 
+				},
+				bindB(){
+					this.$store.dispatch('actionB').then((t)=>{
+						console.log('bindB...',t)
+					})
+				},
+				...mapMutations([
+					'getName'
+				]),
+				...mapMutations({
+					getAge:'age'
+				}),
+				...mapActions(['getLastName','actionB'])
+			}
+		})
+	</script>
+</body>
+</html>

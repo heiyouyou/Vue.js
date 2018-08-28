@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+	  
+	</div>
+	<script src="https://unpkg.com/vue"></script>
+	<script src="https://unpkg.com/vuex@2.0.0"></script>
+	<script>
+		const mapState = Vuex.mapState
+		const mapGetters = Vuex.mapGetters
+
+		const store = new Vuex.Store({
+			state:{
+				count:0,
+				name:'youyouhei',
+				todos: [
+					{ id: 1, text: 'first', done: true },
+					{ id: 2, text: 'second', done: false }
+			    ]
+			},
+			getters:{
+				doneTodosCount(state){
+					return state.todos.filter(todo => todo.done).length
+				},
+				getTodoById:(state,getters)=>(id)=>{
+					return state.todos.find(todo => todo.id==id)
+				},
+				getName(state){
+					return 'hello '+state.name
+				}
+			},
+			mutations:{
+				increment: state => state.count++,
+				decrement: state => state.count--
+			}
+		})
+
+		const Counter = {
+			template:`
+				<div>
+					<p>{{ count }}</p>
+					<p>{{ countPlusLocalState }}</p>
+					<p>{{ countAlias }}</p>
+					<p>{{ name }}</p>
+					<p>{{ test }}</p>
+					<p>{{ doneCount }}</p>
+					<p>{{ getTodo }}</p>
+					<p>{{ doneTodosCount }}</p>
+					<p>{{ getTodoById(2) }}</p>
+					<p>{{ getName }}</p>
+					<p>{{ getDoneCount }}</p>
+					<p>
+						<button @click="increment">+</button>
+						<button @click="decrement">-</button>
+					</p>				
+				</div>`,
+			data(){
+				return {
+					localCount:1
+				}
+			},
+			computed:{
+				test(){
+					return 'test'
+				},
+				doneCount(){
+					return this.$store.getters.doneTodosCount
+				},
+				getTodo(){
+					return this.$store.getters.getTodoById(1)
+				},
+				...mapState({
+					count: state => state.count,
+					countAlias:'count',
+					name:'name',
+					countPlusLocalState (state){
+						return state.count + this.localCount
+					}
+				}),
+				...mapGetters([
+					'doneTodosCount',
+					'getTodoById',
+					'getName'
+				]),
+				...mapGetters({
+					getDoneCount:'doneTodosCount'
+				})
+			},
+			methods: {
+				increment () {
+					this.$store.commit('increment')
+				},
+				decrement () {
+					this.$store.commit('decrement')
+				}
+			}
+		}
+		new Vue({
+			el: '#app',
+			store,
+			template:'<Counter></Counter>',
+			components:{
+				Counter
+			},
+		})
+	</script>
+</body>
+</html>

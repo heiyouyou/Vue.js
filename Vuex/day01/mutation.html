@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<p>{{count}}</p>
+		<p>{{getObj}}</p>
+		<p>{{name+'---'+age}}</p>
+		<button @click="change">change</button>
+		<button @click="changeObj">change</button>
+		<button @click="getName('hei')">getName</button>
+		<button @click="getAge">getAge</button>
+	</div>
+	<script src="https://unpkg.com/vue"></script>
+	<script src="https://unpkg.com/vuex@2.0.0"></script>
+	<script>
+		const mapMutations = Vuex.mapMutations 
+		const mapState = Vuex.mapState 
+		const store = new Vuex.Store({
+			state:{
+				count:0,
+				obj:{
+					a:1
+				},
+				name:'you',
+				age:23
+			},
+			mutations:{
+				increment(state,payload){
+					console.log(payload.type)
+					state.count += payload.num
+				},
+				changeObj(state){
+					state.obj.b = 2
+				},
+				getName(state,n){
+					state.name += ' you...'+n 
+				},
+				age(state){
+					state.age += '岁'
+				}
+			}
+		})
+
+		new Vue({
+			el:'#app',
+			store,
+			computed:{
+				count(){
+					return this.$store.state.count
+				},
+				getObj(){
+					return this.$store.state.obj
+				},
+				...mapState(['age','name'])
+			},
+			methods:{
+				change(){
+					// this.$store.commit('increment',{num:2})
+					this.$store.commit({
+						type: 'increment',
+						num: 4
+					})
+					this.$store.commit('changeObj')
+				},
+				changeObj(){
+					// this.$store.state.obj.c = 3
+					// Vue.set(this.$store.state.obj,'d',4)
+					this.$store.state.obj = {...this.$store.state.obj,e:5} 
+					console.log(this.$store.state.obj)
+				},
+				...mapMutations([
+					'getName'
+				]),
+				...mapMutations({
+					getAge:'age'
+				})
+			}
+		})
+	</script>
+</body>
+</html>

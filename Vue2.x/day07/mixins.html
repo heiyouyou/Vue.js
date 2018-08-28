@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+	<script type="text/javascript">
+		Vue.mixin({
+		  created: function () {
+		    var myOption = this.$options.myOption
+		    if (myOption) {
+		    	console.log(myOption)
+		    }else{
+		    	console.log('not myOption')
+		    }
+		  }
+		})
+
+		var myMixin = {
+			created(){
+				this.hello();
+			},
+			data(){
+				return {
+					foo:'test',
+					bar:'...'
+				}
+			},
+			methods:{
+				hello(){
+					console.log('hello from mixin')
+				}
+			}
+		}
+		var Component = Vue.extend({
+			mixins:[myMixin],
+			created(){
+				console.log('component created...')
+			},
+			data(){
+				return {
+					foo:'component',
+					name:'test'
+				}
+			},
+			methods:{
+				say(){
+					console.log('say from component')
+				}
+			}
+		})
+
+		var component = new Component()
+		console.log(component.$options)
+	</script>
+</body>
+</html>

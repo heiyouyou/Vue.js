@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+	  
+	</div>
+	<script src="https://unpkg.com/vue"></script>
+	<script src="https://unpkg.com/vuex@3.0.1"></script>
+	<script>
+		const mapState = Vuex.mapState
+		const mapGetters = Vuex.mapGetters
+		const mapActions = Vuex.mapActions
+
+		const moduleA = {
+			state: {
+				name: 'moduleA',
+				count: 1 
+			},
+			getters: {
+				gnameA(state,getters){
+					console.log(1,'gettersA',state)
+					console.log(2,getters)
+					return state.name+'a'
+				},
+				B(state,getters,rootState){
+					return state.name+'a'
+				},
+			},
+			mutations: {
+				increment(state){
+					console.log(state)
+					state.count += 1
+				}
+			},
+			actions: {
+				incrementIfOddOnRootSum ({ state, commit, rootState }) {
+					if ((state.count + rootState.count) % 2 === 1) {
+						commit('increment')
+					}else {
+						console.log('not commit')
+					}
+			    }
+			}
+		}
+		const moduleB = {
+			state: {
+				name:'moduleB'
+			},
+			getters: {
+				gnameB(state,getters,rootState){
+					console.log(3,'gettersB',rootState)
+					return state.name+'b'
+				},
+				// B(state,getters,rootState){
+				// 	return state.name+'b'
+				// },
+			},
+			mutations: {
+				increment(state){
+					console.log(state)
+					state.name += 1
+				}
+			},
+			actions: {
+				incrementIfOddOnRootSum ({ state, commit, rootState }) {
+					if ((state.count + rootState.count) % 2 === 1) {
+						commit('increment')
+					}else {
+						console.log('not commit')
+					}
+			    }
+			}
+		}
+
+		const moduleC = {
+			namespaced:true,
+			state:{
+				C:'this is moduleC',
+				name:'moduleC'
+			},
+			getters:{
+				getName(state,getters,rootState,rootGetters){
+					console.log(state,getters,rootState,rootGetters)
+					return state.name+' text'+state.C
+				}
+			},
+			mutations:{
+				cc(state,data){
+					state.C = 'moduleC is this' + data
+				}
+			},
+			actions:{
+				changeC({dispatch,commit,getters,rootGetters}){
+					console.log('cccccccc')
+					commit('cc','xxxxxx')
+				}
+			}
+		}
+
+		const store = new Vuex.Store({
+			state: {
+				root: 'Store',
+				count: 2
+			},
+			modules: {
+				a: moduleA,
+				b: moduleB,
+				c: moduleC
+			}
+		})
+		const Children = {
+			template:`<div><h2>{{getName}}</h2><h3>{{fname}}</h3><h4>{{count}}</h4><h4>{{getNameC}}</h4><button @click="getCount">change</button><button @click="changeC">change C</button></div>`,
+			computed: {
+				getName(){
+					console.log(4,this.$store.state)
+					console.log('5-1',this.$store.state.a)
+					console.log('5-2',this.$store.state.b)
+					return this.$store.state.a.name
+				},
+				fname(){
+					console.log(6,this.$store.getters.B)
+					console.log(7,this.$store.getters.gnameA)
+					console.log(8,this.$store.getters.gnameB)
+					return 'test'
+				},
+				count(){
+					return this.$store.state.a.count
+				},
+				getNameC(){
+					return this.$store.getters['c/getName']
+				}
+			},
+			methods: {
+				getCount(){
+					this.$store.dispatch('incrementIfOddOnRootSum')
+					this.$store.dispatch('c/changeC')
+				},
+				changeC(){
+					this.$store.dispatch('c/changeC')
+					console.log(this.$store.getters['c/getName'])
+				}
+			}
+		}
+		new Vue({
+			el: '#app',
+			store,
+			template: '<Children></Children>',
+			components: {
+				Children
+			}
+		})
+	</script>
+</body>
+</html>

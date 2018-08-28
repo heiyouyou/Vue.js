@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+	  <h2>{{getRootName}}</h2>
+	  <h3>{{getAname}}</h3>
+	  <h3>{{getBname}}</h3>
+	  <h4>{{getAchildrenName}}</h4>
+	  <h4>{{getFullName}}</h4>
+	  <button @click='changeName'>changeName</button>
+	  <div>------------</div>
+	  <button @click='changeGlobal'>changeGlobal</button>
+	  <button @click='actionName'>actionName</button>
+	</div>
+	<script src="https://unpkg.com/vue@2.5.2"></script>
+	<script src="https://unpkg.com/vuex@3.0.1"></script>
+	<script>
+		const mapState = Vuex.mapState
+		const mapGetters = Vuex.mapGetters
+		// const mapActions = Vuex.mapActions
+		const createNamespacedHelpers  = Vuex.createNamespacedHelpers 
+		const { mapActions } = createNamespacedHelpers('A')
+
+		const A = {
+			namespaced: true,
+			state: {
+				name:'this moduleA'
+			},
+			getters:{
+				getFullName(state){
+					return ' hello' + state.name
+				}
+			},
+			mutations:{
+				setName(state,payload){
+					state.name = payload
+				}
+			},
+			actions:{
+				actionName({dispatch,commit,getters,rootGetters}){
+					console.log(getters.getFullName)
+					console.log(rootGetters.getRootName)
+					commit('setName',' hello world')
+					// commit('setRootName','change Root Name...') // 错误
+					commit('setRootName','change Root Name...',{root:true})
+				},
+				someAction:{
+					root: true,
+					handler(namespacedContext,payload){
+						console.log(namespacedContext)
+						namespacedContext.commit('setName','带命名空间的模块注册全局 action')
+					}
+				}
+			},
+			modules:{
+				A_sub:{
+					state:{
+						A_children: 'A_children'
+					},
+					getters:{
+						getA_children(state){
+							console.log(state.A_children)
+							return state.A_children + ' text....'
+						}
+					}
+				}
+			}
+		}
+
+		const B = {
+			state:{
+				name:'this moduleB'
+			},
+			getters:{
+				getFullNameB(state){
+					return state.name + 'no namespaced B'
+				}
+			}
+		}
+
+		const store = new Vuex.Store({
+			modules:{
+				A,
+				B
+			},
+			state:{
+				rootName:'this is Root'
+			},
+			getters:{
+				getRootName(state){
+					return state.rootName + ' hhhhhh'
+				}
+			},
+			mutations:{
+				setRootName(state,text){
+					state.rootName = text
+				}
+			}
+		})
+		new Vue({
+			el: '#app',
+			store,
+			computed:{
+				getAname(){
+					return this.$store.getters['A/getFullName']
+				},
+				getBname(){
+					return this.$store.getters['getFullNameB']
+				},
+				getAchildrenName(){
+					return this.$store.getters['A/getA_children']
+				},
+				...mapGetters(['getRootName']),
+				...mapGetters('A',{
+					'getFullName':'getFullName'
+					// 'getFullName':'A/getFullName'
+				})
+			},
+			methods:{
+				changeName(){
+					this.$store.dispatch('A/actionName')
+				},
+				changeGlobal(){
+					// this.$store.dispatch('A/someAction') // 错误
+					console.log(this.$store.state.A.A_sub.A_children,'sub....')
+					this.$store.dispatch('someAction')
+				},
+				// ...mapActions('A',[
+				// 	'actionName'
+				// ])
+				// 当使用 createNamespacedHelpers 创建出指定命名空间的辅助函数时
+				...mapActions([
+					'actionName'
+				])
+			}
+		})
+	</script>
+</body>
+</html>

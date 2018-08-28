@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>对象属性的检测</title>
+</head>
+<body>
+	<div id="app">
+		<p>{{a}}</p>
+		<p>{{b}}</p>
+		<p>{{userProfile.name}}-----{{userProfile.age}}----{{userProfile.favoriteColor}}----{{userProfile.city}}</p>
+		<ul>
+			<li v-for="n in eventNumbers">{{n}}</li>
+		</ul>
+		<ul>
+			<li v-for="n in eventNumbers1(numbers)">{{n}}</li>
+		</ul>
+		<span v-for="n in 10">{{n}}--</span>
+	</div>
+
+	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el:"#app",
+			data:{
+				a:1,
+				userProfile:{
+					name:'Anika'
+				},
+				numbers: [ 1, 2, 3, 4, 5 ]
+			},
+			methods:{
+				eventNumbers1(numbers){
+					return numbers.filter(function(number){
+						return number %2===0
+					})
+				}
+			},
+			computed:{
+				eventNumbers(){
+					return this.numbers.filter(function(number){
+						return number %2===0
+					})
+				}
+			}
+		})
+		vm.b = 2 // 不是响应式的
+		// 正确的方式添加响应式属性
+		// Vue.set(vm.userProfile,'age',27)
+		// 或者
+		vm.$set(vm.userProfile,'age',28)
+
+		// 动态为已有对象数据添加多个属性的方式
+		vm.userProfile = Object.assign({},vm.userProfile,{
+			city:'LOS',
+			favoriteColor:'Vue Green'
+		})
+
+	</script>
+</body>
+</html>

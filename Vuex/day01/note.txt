@@ -1,0 +1,56 @@
+一、开始
+	每一个 Vuex 应用的核心就是 store（仓库）。“store”基本上就是一个容器，它包含着你的应用中大部分的状态 (state)。
+	Vuex 和 单纯的全局对象有以下两点不同：
+		1.Vuex 的状态存储是响应式的。当 Vue 组件从 store 中读取状态的时候，若 store 中的状态发生变化，那么相应的组件也会相应地得到高效更新。
+		2.不能直接改变 store 中的状态。改变 store 中的状态的唯一途径就是显式地提交 (commit) mutation。
+
+二、State
+	单一状态树
+	Vuex 使用单一状态树——是的，用一个对象就包含了全部的应用层级状态。至此它便作为一个“唯一数据源”而存在。这也意味着，每个应用将仅仅包含一个 store 实例。
+
+三、Getters
+	Vuex 允许在 store 中定义“getter”（可以认为是 store 的计算属性）。就像计算属性一样，getter 的返回值会根据它的依赖被缓存起来，且只有当它的依赖值发生了改变才会被重新计算。
+
+四、Mutation
+	更改 Vuex 的 store 中的状态的唯一方法是提交 mutation。Vuex 中的 mutation 非常类似于事件：每个 mutation 都有一个字符串的 事件类型 (type) 和 一个 回调函数 (handler)。这个回调函数就是进行状态更改的地方，并且它会接受 state 作为第一个参数：
+
+	1、Mutation 需遵守 Vue 的响应规则
+		既然 Vuex 的 store 中的状态是响应式的，那么当我们变更状态时，监视状态的 Vue 组件也会自动更新。这也意味着 Vuex 中的 mutation 也需要与使用 Vue 一样遵守一些注意事项：
+			最好提前在你的 store 中初始化好所有所需属性。
+
+			当需要在对象上添加新属性时，你应该
+
+			使用 Vue.set(obj, 'newProp', 123), 或者
+
+			以新对象替换老对象。例如，利用 stage-3 的对象展开运算符我们可以这样写：
+
+			state.obj = { ...state.obj, newProp: 123 }
+
+	2、一条重要的原则就是要记住 mutation 必须是同步函数
+
+五、Action
+	Action 类似于 mutation，不同在于：
+	Action 提交的是 mutation，而不是直接变更状态。
+	Action 可以包含任意异步操作。
+
+	1、Action 函数接受一个与 store 实例具有相同方法和属性的 context 对象，因此可以调用 context.commit 提交一个 mutation，或者通过 context.state 和 context.getters 来获取 state 和 getters。
+
+六、Module
+	由于使用单一状态树，应用的所有状态会集中到一个比较大的对象。当应用变得非常复杂时，store 对象就有可能变得相当臃肿。
+	为了解决以上问题，Vuex 允许我们将 store 分割成模块（module）。每个模块拥有自己的 state、mutation、action、getter、甚至是嵌套子模块——从上至下进行同样方式的分割。
+	
+	1、当采用Vuex的module进行分模块管理时，默认getters、mutations和actions都是全局注册在根模块上，并且不同模块上如果具有同名的mutations和actions，他们都是共存的，并不会互相覆盖，当同时dispath或者commit时都会触发响应，但是对于getters如果出现同名就只能有一个，并且是第一个声明该getter的模块具有（当然vuex声明同名的getters会报错。）。注意，state默认就是局部化的，各个模块之间互不影响。
+
+	2、通过添加 namespaced: true 的方式使其成为带命名空间的模块。当模块被注册后，它的所有 getter、action 及 mutation 都会变成局部化，并且自动根据模块注册的路径调整命名，如：
+	this.$store.getters['A/getFullName']
+	this.$store.dispatch['A/setName']
+	this.$store.commit['A/setFirstName']
+
+	3、启用了命名空间的模块中的 getter 和 action 的对应函数的参数会收到局部化的 getter，dispatch 和 commit。并且在这些函数内部调用模块中的getter、actions、mutation时，不需要带上命名空间路径访问，很好的解决了即使更改 namespaced:false 属性后也不需要修改模块内的代码。
+
+	4、在带命名空间的模块内访问全局内容（Global Assets）
+	如果你希望使用全局 state 和 getter，rootState 和 rootGetter 会作为第三和第四参数传入 getter，也会通过 context 对象的属性传入 action。
+	若需要在全局命名空间内分发 action 或提交 mutation，将 { root: true } 作为第三参数传给 dispatch 或 commit 即可。
+
+	5、在带命名空间的模块注册全局 action
+	若需要在带命名空间的模块注册全局 action，可添加 root: true，并将这个 action 的定义放在函数 handler 中。

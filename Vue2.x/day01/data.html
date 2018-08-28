@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>数据渲染</title>
+</head>
+
+<body>
+	<div id="app">
+		<!-- <p>{{a}}--{{b}}</p> -->
+		<p>{{obj.foo}}</p>
+		<button @click="obj.foo='baz'">Change it</button>
+	</div>
+
+	<div id="example">
+		<span>{{a}}</span>
+		<button v-on:click="a=2">Change it</button>
+	</div>
+	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+	<script type="text/javascript">
+		var data = {a:1}
+		var vm = new Vue({
+			data:data
+		})
+		console.log(vm.a===data.a)
+		vm.a = 2
+		console.log(data.a)
+		var obj = {
+			foo:'bar'
+		}
+		Object.freeze(obj)
+
+		var app = new Vue({
+			el:"#app",
+			// data:{
+			// 	a:1
+			// }
+			data(){
+				return {
+					obj
+				}
+			}
+		})
+		// app.b = 2
+
+		var data2 = {a:1,$b:2}
+		var vm2 = new Vue({
+			el:"#example",
+			data:data2
+		})
+
+		// $data获取数据源对象
+		console.log(vm2.$data)
+		console.log(vm2.$data === data2)//true
+		console.log(vm2.$data.$b)//2
+		console.log(vm2.$b)//undefined，以_或者$开头的属性是不会被Vue实例代理
+		// $el获取元素
+		console.log(vm2.$el)
+		console.log(vm2.$el===document.getElementById("example"))
+		// $watch监听某个数据源属性的改变
+		vm2.$watch('a',(newValue,oldValue)=>{
+			console.log(newValue,oldValue)
+		})
+	</script>
+</body>
+</html>

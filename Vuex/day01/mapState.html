@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+	  
+	</div>
+	<script src="https://unpkg.com/vue"></script>
+	<script src="https://unpkg.com/vuex@2.0.0"></script>
+	<script>
+		const store = new Vuex.Store({
+			state:{
+				count:0,
+				name:'youyouhei'
+			},
+			mutations:{
+				increment: state => state.count++,
+				decrement: state => state.count--
+			}
+		})
+		const mapState = Vuex.mapState
+		const Counter = {
+			template:`
+				<div>
+					<p>{{ count }}</p>
+					<p>{{ countPlusLocalState }}</p>
+					<p>{{ countAlias }}</p>
+					<p>{{ name }}</p>
+					<p>{{ test }}</p>
+					<p>
+						<button @click="increment">+</button>
+						<button @click="decrement">-</button>
+					</p>				
+				</div>`,
+			data(){
+				return {
+					localCount:1
+				}
+			},
+			computed:{
+				test(){
+					return 'test'
+				},
+				...mapState({
+					count: state => state.count,
+					countAlias:'count',
+					name:'name',
+					countPlusLocalState (state){
+						return state.count + this.localCount
+					}
+				})
+			},
+			methods: {
+				increment () {
+					this.$store.commit('increment')
+				},
+				decrement () {
+					this.$store.commit('decrement')
+				}
+			}
+		}
+		new Vue({
+			el: '#app',
+			store,
+			template:'<Counter></Counter>',
+			components:{
+				Counter
+			},
+		})
+	</script>
+</body>
+</html>

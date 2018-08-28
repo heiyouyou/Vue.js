@@ -1,0 +1,194 @@
+一、计算属性
+	为了解决定义在data项中的基础属性会被多处的进行复杂逻辑的处理，需要使用computed项设置getter函数解决。
+	例如：
+	var vm = new Vue({
+		el: '#example',
+		data: {
+			message: 'Hello'
+		},
+		computed: {
+			// 计算属性的 getter函数，
+			reversedMessage: function () {
+			  // `this` 指向 vm 实例
+			  return this.message.split('').reverse().join('')
+			}
+		}
+	})
+	注意：
+		1.计算属性会和普通属性绑定在一起，只要普通属性发生变化，计算属性也会发生改变。并且计算属性以getter函数的形式进行定义。
+		2.计算属性定义、普通属性、方法不能够出现同名，除了侦听属性外。
+		3.计算属性与普通方法的区别，虽然两者都能够在初始的时候达成想要的效果，但是计算属性会进行缓存，只要依赖的普通属性没有改变，就会一直调用之前计算出来的值，如果改变就会进行缓存更新，从而达到性能上的开销节省。而普通方法每次初始化都会进行更新。
+		4.当滥用watch来进行监听侦听属性的频繁变动时，应该考虑使用计算属性来代替。
+
+二、侦听器
+	当涉及执行异步或者开销较大的数据变化操作时，就可以使用自定义的侦听器进行响应数据的变化。
+	注意：
+		1.侦听器(函数)的命名要与普通属性(侦听属性)同名。
+		2.侦听器对应一个对象，键是观察表达式，值是对应回调。值也可以是方法名，或者是对象，包含配置选项。在实例化时为每个键调用$watch()。
+		3.当观察的数据为对象时，如果键值发生变化，为了监听到数据变化，需要添加deep:true参数。
+
+三、Class与Style绑定
+	1、Class
+		1.可以传给 v-bind:class 一个对象，以动态地切换class，如：
+			<div v-bind:class="{ active: isActive }"></div>，只是isActive必须在实例中初始化值为Boolean值。
+		2.v-bind:class 指令也可以与普通的class属性共存，如：
+			<div class="static" v-bind:class="{ active: isActive, 'text-danger': hasError }">
+			</div>
+		3.可以在data项中配置一个类对象，直接绑定在html上，如：
+			<div v-bind:class="classObject"></div>
+			data项如：
+				data: {
+					classObject: {
+						active: true,
+						'text-danger': false
+					}
+				}
+		4.也可以与计算属性连用，只要计算属性返回的是一个对象，如：
+			<div v-bind:class="classObject"></div>
+			data: {
+				isActive: true,
+				error: null
+			},
+			computed: {
+				classObject: function () {
+					return {
+						active: this.isActive && !this.error,
+						'text-danger': this.error && this.error.type === 'fatal'
+					}
+				}
+			}
+		5.可以传入一个类名的数组，如：
+			<div v-bind:class="[activeClass, errorClass]"></div>
+			data: {
+				activeClass: 'active',
+				errorClass: 'text-danger'
+			}
+		6.当然还可以使用三目表达式进行添加，如：
+			<div v-bind:class="[isActive ? activeClass : '', errorClass]"></div>
+		7.可以对象和数组写法混合，适用于多个条件的class，如：
+			<div v-bind:class="[{ active: isActive }, errorClass]"></div>
+
+
+
+	2、Style
+		v-bind:style的语法就是一个json对象，类似于css，如：
+		<div v-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }"></div>
+		data: {
+			activeColor: 'red',
+			fontSize: 30
+		}
+		1.可以直接绑定一个style样式对象，如：
+			<div v-bind:style="styleObject"></div>
+			data: {
+				styleObject: {
+					color: 'red',
+					fontSize: '13px'
+				}
+			}
+		2.v-bind:style也可以以数组的形式将过个样式对象应用在同一个元素上，如：
+			<div v-bind:style="[baseStyles, overridingStyles]"></div>
+			data:{
+				baseStyles:{
+					fontSize:'12px',
+					color:'#111'
+				},
+				overridingStyles:{
+					fontSize:'14px',
+					backgroundColor:'#ccc'
+				}
+			}
+		3.有一些css属性需要加上浏览器的内核作为前缀进行兼容，如-webkit-transform/-moz-transform等，但是Vue.js已经自动检测添加了对应的前缀了。
+		4.对于v-bind:style绑定的属性进行提供一个多个值数组时，会根据浏览器进行选择其中一个来使用，如：
+			<div :style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }"></div>
+
+四、条件渲染
+	1.使用key管理可复用的元素
+		如下：
+		<template v-if="loginType === 'username'">
+			<label>Username</label>
+			<input placeholder="Enter your username">
+		</template>
+		<template v-else>
+			<label>Email</label>
+			<input placeholder="Enter your email address">
+		</template>
+		没有为上面的元素添加key值，则以上元素不会被重新渲染，而只是改变了一些文本内容和属性值而已，
+		如果添加了key只会声明改元素是独一无二，要被重新渲染的，如：
+		<template v-if="loginType === 'username'">
+			<label>Username</label>
+			<input placeholder="Enter your username" key="username-input">
+		</template>
+		<template v-else>
+			<label>Email</label>
+			<input placeholder="Enter your email address" key="email-input">
+		</template>
+	2.v-show
+		v-show的元素始终会被渲染并保留在DOM中。v-show只是简单地切换元素的CSS属性display。
+		注意，v-show不支持<template>元素，也不支持v-else。
+		v-if vs v-show：
+			v-if是“真正”的条件渲染，因为它会确保在切换过程中条件块内的事件监听器和子组件适当地被销毁和重建。
+
+			v-if 也是惰性的：如果在初始渲染时条件为假，则什么也不做——直到条件第一次变为真时，才会开始渲染条件块。
+
+			相比之下，v-show 就简单得多——不管初始条件是什么，元素总是会被渲染，并且只是简单地基于 CSS 进行切换。
+			一般来说，v-if 有更高的切换开销，而 v-show 有更高的初始渲染开销。因此，如果需要非常频繁地切换，则使用 v-show 较好；如果在运行时条件很少改变，则使用 v-if 较好。
+
+五、数组更新检测
+	1.变异方法
+		Vue 包含一组观察数组的变异方法，所以它们也将会触发视图更新。这些方法如下：
+			push()//往后添加
+			pop()//删除最后一个
+			shift()//删除第一个
+			unshift()//往第一位添加
+			splice()//切割数组
+			sort()//排序
+			reverse()//翻转数组元素
+		以上的方法使用配合vue实例操作数据中的数组，就会触发改变和视图更新。
+	2.非变异方法
+		非变异(non-mutating method)方法，例如：filter(),concat()和slice()。这些不会改变原始数组，但总是返回一个新数组。
+	3.注意事项
+		由于 JavaScript 的限制，Vue不能检测以下变动的数组：
+			当你利用索引直接设置一个项时，例如：vm.items[indexOfItem] = newValue
+			当你修改数组的长度时，例如：vm.items.length = newLength
+		为了解决第一类问题，以下两种方式都可以实现和 vm.items[indexOfItem] = newValue相同的效果，同时也将触发状态更新：
+
+		// Vue.set
+		Vue.set(example1.items, indexOfItem, newValue)
+		// Array.prototype.splice
+		example1.items.splice(indexOfItem, 1, newValue)
+
+		为了解决第二类问题，你可以使用 splice：
+		example1.items.splice(newLength)
+
+六、对象属性更改检测
+	对于Vue实例已经渲染结束完毕，vue是不能检测对象属性的添加或删除：
+	var vm = new Vue({
+	  data: {
+	    a: 1
+	  }
+	})
+	// `vm.a` 现在是响应式的
+
+	vm.b = 2
+	// `vm.b` 不是响应式的
+
+	Vue不能动态添加根级别（即是vm.b = 2）的响应式属性。但是，可以使用 Vue.set(object, key, value) 方法向嵌套对象添加响应式属性，如：
+	var vm = new Vue({
+	  data: {
+	    userProfile: {
+	      name: 'Anika'
+	    }
+	  }
+	})
+	添加响应式属性：
+	Vue.set(vm.userProfile, 'age', 27)
+	也可以使用vm.$set代替全局Vue.set的方法:
+	vm.$set(vm.userProfile,'age',27)
+	如果是添加多个属性，这样：
+	vm.userProfile = Object.assign({}, vm.userProfile, {
+	  age: 27,
+	  favoriteColor: 'Vue Green'
+	})
+
+七、v-for和v-if
+	当它们处于同一节点，v-for 的优先级比 v-if 更高，这意味着 v-if 将分别重复运行于每个 v-for 循环中。

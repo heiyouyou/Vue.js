@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>组件注册</title>
+	<style type="text/css">
+		.form-control{
+			width:200px;
+			height:25px;
+			border:1px solid #ccc;
+		}
+		.text-red{
+			color:red;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<bs-date-input class="date-picker-theme-dark" date-picker-theme-dark='text-red'></bs-date-input>
+	</div>
+	
+	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+	<script type="text/javascript">
+		new Vue({
+			el:'#app',
+			components:{
+				'bs-date-input':{
+					props:['datePickerThemeDark'],
+					template:'<input type="date" class="form-control" :class=[datePickerThemeDark] :style=styleObj>',
+					data(){
+						return {
+							styleObj:{
+								color:"blue"
+							}
+						}
+					}
+				}
+			}
+		})
+	</script>
+</body>
+</html>

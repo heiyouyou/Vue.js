@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>v-model指令的使用</title>
+	<style type="text/css">
+		
+	</style>
+</head>
+<body>
+	<div id="app">
+		<input v-model.lazy="msg" type="text" value="test" placeholder="please input...">
+		<p>{{msg}}</p>
+
+		<textarea v-model="text">dsfsdfwewrewr</textarea>
+		<p :style="[ws]">{{text}}</p>
+
+		<div>单个复选框</div>
+		<input type="checkbox" id="checkbox" checked v-model="checked" name="">
+		<label for="checkbox">{{checked}}</label>
+		<div>多个复选框</div>
+		<input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+		<label for="jack">Jack</label>
+		<input type="checkbox" id="john" value="John" v-model="checkedNames">
+		<label for="john">John</label>
+		<input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+		<label for="mike">Mike</label>
+		<p>checkedNames:{{checkedNames}}</p>
+
+		<input type="radio" id="one" value="One" v-model="picked">
+		<label for="one">One</label>
+		<input type="radio" id="two" value="Two" v-model="picked">
+		<label for="two">Two</label>
+		<p>radioValue:{{picked}}</p>
+
+		<select v-model="selected">
+			<option disabled value="">请选择</option>
+			<option>A</option>
+			<option>B</option>
+			<option>C</option>
+		</select>
+		<P>selectValue:{{selected}}</P>
+		<select v-model="selectedList" multiple style="width:50px;">
+		    <option>A</option>
+		    <option>B</option>
+		    <option>C</option>
+		</select>
+		<br>
+		<span>Selected: {{ selectedList }}</span>
+		<p>循环渲染</p>
+		<select v-model="selected1">
+			<option v-for="option in options" v-bind:value="option.value">{{option.text}}</option>
+		</select>
+		<p>单选框</p>
+		<input type="radio" v-model="pick" v-bind:value="a">
+		<p>{{pick}}</p>
+		<select v-model="selected2">
+			<option v-bind:value="{number:123}">123</option>
+		</select>
+		<p>{{selected2}}---{{selected2.number}}---{{typeof selected2}}</p>
+		数字：<input type="number" v-model.number="age">
+		<p>{{age}}---{{typeof age}}</p>
+		去空格：<input type="text" v-model.trim="msg">
+		<p>{{msg}}</p>
+
+		
+ 	</div>
+	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el:"#app",
+			data:{
+				msg:"",
+				text:"",
+				ws:{
+					"white-space":"pre-line"
+				},
+				checked:false,
+				checkedNames:[],
+				picked:"",
+				selected:'',
+				selectedList:[],
+				selected1: 'A',
+			    options: [
+			      { text: 'One', value: 'A' },
+			      { text: 'Two', value: 'B' },
+			      { text: 'Three', value: 'C' }
+			    ],
+			    pick:"",
+			    a:'test',
+			    selected2:"",
+			    age:0
+			}
+		})
+
+	</script>
+</body>
+</html>

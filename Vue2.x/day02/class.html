@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Class与Style绑定</title>
+	<style type="text/css">
+		.active{background:#ccc;}
+		.text-danger{color:red;}
+		.static{font-size:16px;font-weight:bold;}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<p class="static" :class="{active:isActive,'text-danger':hasError}">测试类样式1</p>
+		<p class="static" :class="classObj">测试类样式2</p>
+		<p class="static" :class="classObj2">测试类样式3</p>
+		<p class="static" :class="[class1,class2]">测试类样式4</p>
+		<p class="static" :class="[isActive?class1:'',class2]">测试类样式4</p>
+		<p class="static" :class="[{active:isActive},class2]">测试类样式4</p>
+		<p>........class与style分界线........</p>
+		<p :style="{color:activeColor,fontSize:fontSize+'px'}">style样式</p>
+		<p :style="styleObject">style样式2</p>
+		<p :style="[styleObject,styleObject2]">style样式3</p>
+		<div :style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }">测试多重样式值，只选择浏览器兼容的值</div>
+	</div>
+	<my-component :class="{active:isActive,'text-danger':error}"></my-component>
+
+	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+	<script type="text/javascript">
+		Vue.component('my-component',{
+			template:'<p class="active text-danger">Hisdfdsf</p>',
+			data(){
+				return {
+					isActive:true,
+					error:false
+				}
+			}
+		})
+		var vm = new Vue({
+			el:"#app",
+			data:{
+				isActive:true,
+				hasError:false,
+				error:null,
+				class1:'text-danger',
+				class2:'active',
+				classObj:{active:true,'text-danger':false},
+				fontSize:'16',
+				activeColor:'yellow',
+				styleObject: {
+				    color: 'red',
+				    fontSize: '13px'
+				},
+				styleObject2: {
+				    fontWeight:'bold'
+				}
+			},
+			computed:{
+				classObj2(){
+					return{
+						active: !this.isActive && !this.error,
+      					'text-danger': this.error && this.error.type === 'fatal'
+					}
+				}
+			}
+		});
+	</script>
+</body>
+</html>

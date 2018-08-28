@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>条件渲染</title>
+</head>
+<body>
+		<div id="app">
+			<template v-if="loginType==='username'">
+				<label>Username</label>
+				<input type="text" placeholder="Enter your username" key="username">
+			</template>
+			<template v-else>
+				<label>Email</label>
+				<input type="text" placeholder="Enter your email address" key="address">
+			</template>
+			<br>
+			<button @click="change">改变登录方式</button>
+			<div>.............分界线............</div>
+			<template v-show="loginType==='username'">
+				<label>Username</label>
+				<input type="text" placeholder="Enter your username" key="username">
+			</template>
+			<template v-show="loginType!='username'">
+				<label>Email</label>
+				<input type="text" placeholder="Enter your email address" key="address">
+			</template>
+		</div>
+	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el:"#app",
+			data:{
+				loginType:"username"
+			},
+			methods:{
+				change(){
+					this.loginType === 'address'?this.loginType='username':this.loginType='address';
+				}
+			}
+		})
+	</script>
+</body>
+</html>

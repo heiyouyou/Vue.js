@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<!-- <stack-overflow></stack-overflow> -->
+		<inline-tem inline-template :message="message">
+			<div>
+			    <p>这些将作为组件自身的模板。</p>
+			    <p>而非父组件透传进来的内容。{{message}}</p>
+		  </div>
+		</inline-tem>
+		<hello-world></hello-world>
+		<terms-of-service></terms-of-service>
+		<asycn></asycn>
+		<com-a></com-a>
+		<com-b></com-b>
+	</div>
+	<script type="text/x-template" id="hello-world-template">
+		<p>Hello hello hello</p>
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+	<script type="text/javascript">
+		Vue.component('stack-overflow',{
+			template:'<div><stack-overflow></stack-overflow></div>'
+		})
+		Vue.component('inline-tem',{
+			template:'<div><slot></slot><hello-world></hello-world></div>',
+			props:['message']
+		})
+		Vue.component('hello-world', {
+		  	template: '#hello-world-template'
+		})
+		Vue.component('terms-of-service', {
+			template: '\
+				<div v-once>\
+				  <h1>Terms of Service</h1>\
+				  ...很多静态内容...\
+				</div>\
+			'
+		})
+		Vue.component('asycn',(resolve,reject)=>{
+			setTimeout(()=>{
+				resolve({
+					'template':'<div>这是一个异步组件....</div>'
+				})
+			},2000)
+		})
+		var comA = {
+			'template':'<div>这是一个A组件</div>'
+		}
+		var comB = {
+			components:{
+				'com-a':comA
+			},
+			'template':'<div>这是一个B组件<com-a></com-a></div>'
+		}
+		new Vue({
+			'el':'#app',
+			data:{
+				message:'test........'
+			},
+			components:{
+				'com-a':comA,
+				'com-b':comB
+			}
+		})
+	</script>
+</body>
+</html>

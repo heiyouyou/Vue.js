@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+<body>
+	<div id="counter-event-example">
+		<p>{{total}}---{{test}}</p>
+		<button-counter v-for="item in [1,2,3]" v-on:increment="incrementTotal" ref="button-btn"></button-counter>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+	<script type="text/javascript">
+		Vue.component('button-counter',{
+			template:'<button v-on:click="incrementCounter">{{counter}}</button>',
+			data(){
+				return {
+					counter:0,
+					message:'hello world!!!'
+				}
+			},
+			methods:{
+				incrementCounter(){
+					this.counter +=1
+					this.$emit('increment',{message:this.message})
+				}
+			}
+		})
+		let app = new Vue({
+			el:'#counter-event-example',
+			data:{
+				total:0,
+				messages:[]
+			},
+			methods:{
+				incrementTotal(){
+					this.total +=1
+				}
+			},
+			computed:{
+				test(){
+					console.log(this.$refs)
+					return 22
+				}
+			}
+		})
+		console.log(app.$refs)
+	</script>
+</body>
+</html>

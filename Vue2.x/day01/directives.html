@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>指令使用</title>
+
+	<style type="text/css">
+		[v-cloak]{
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<span v-text="msg" v-cloak></span><br>		
+		<span v-cloak>{{msg}}</span>
+		<p v-html="html"></p>	
+		<div v-show="show">显示/隐藏</div>
+		<div v-if="show">显示</div>
+		<button v-on:click="show=!show">显示/隐藏</button>
+		<ul>
+			<li v-for="(item,index) in list" v-if="item.show">{{item.text}}---{{index}}</li>
+		</ul>
+		<ul>
+			<li v-for="(item,index) of list" :key="item.id">{{parent}}---{{item.text}}---{{index}}</li>
+		</ul>	
+		<ul v-if="nodata.length">
+			<li v-for="item in list">{{item.text}}</li>
+		</ul>
+		<p v-else>No data...</p>
+	
+		<h1 v-if="show">Yes</h1>
+		<h1 v-else>No</h1>
+	
+		<template v-if="show">
+			<h1>Title</h1>
+			<p>Paragraph 1</p>
+			<p>Paragraph 2</p>
+		</template>		
+
+		<div v-if="type=='A'">
+			A
+		</div>
+		<div v-else-if="type=='B'">
+			B
+		</div>
+		<div v-else-if="type=='C'">
+			C
+		</div>
+		<div v-else>
+			No
+		</div>
+	
+		<ul>
+			<li v-for="value in obj">{{value}}</li>
+			<li v-for="(value,key) in obj">{{key}}:{{value}}</li>
+			<li v-for="(value,key,index) in obj">{{index}}.{{key}}:{{value}}</li>
+			<li v-for="(value,key,index) of obj">{{index}}.{{key}}:{{value}}</li>
+		</ul>
+
+		<p v-pre v-bind:title="'test'">{{ this will not be compiled }}</p>
+		<p v-cloak>{{msg}}</p>
+	</div>
+	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el:"#app",
+			data:{
+				msg:"test...",
+				html:"<span style='color:red;'>test</span>",
+				test:"测试",
+				show:true,
+				parent:"Parent",
+				list:[
+					{
+						show:true,
+						text:"apple",
+						id:1
+					},
+					{
+						show:false,
+						text:"banana",
+						id:2
+					},
+					{
+						show:true,
+						text:"pear",
+						id:3
+					}
+				],
+				nodata:[],
+				type:'A',
+				obj:{
+					firstName:"John",
+					lastName:"Doe",
+					age:30,
+				}
+			}
+		})
+	</script>
+</body>
+</html>

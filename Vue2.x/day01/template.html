@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>模板语法</title>
+</head>
+<body>
+	<div id="app">
+		<span v-once>{{msg}}---{{test}}</span>
+		<button v-on:click='test="test2..."'>change it</button>
+		<p>{{html}}</p>
+		<p v-html="html"></p>
+		<div v-bind:id="dynamicId">dynamicId</div>
+		<button v-bind:disabled="isButtonDisabled">按钮</button>
+		<a href="javascript:void(0);" v-bind:title="abtn">test</a>
+		<div>
+			{{isButtonDisabled?"通过":"否定"}}<br>
+			{{list.join("-")}}<br>
+			{{msg+"world..."}}<br>
+			{{Math.random()}}<br>
+			{{new Date()}}<br>
+			<!-- {{ if (ok) { return msg } }} -->
+		</div>
+	</div>
+	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el:"#app",
+			data:{
+				msg:"hello...",
+				test:"test...",
+				html:"<span style='color:red;'>world</span>",
+				isButtonDisabled:false,
+				dynamicId:"dynamicId",
+				abtn:'abtn',
+				ok:true,
+				list:["apple","banana","pear"]
+			}
+		})
+	</script>
+</body>
+</html>
